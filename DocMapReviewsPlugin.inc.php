@@ -342,7 +342,8 @@ class DocMapReviewsPlugin extends GenericPlugin {
         $idPreprint=$request->getRouter()->getHandler()->preprint->_data['id'];
         $idPreprint=((int) $idPreprint);
 
-        $shouldDisplayReviews = $this->getDocMapReviewsPreference($idPreprint);
+//        $shouldDisplayReviews = $this->getDocMapReviewsPreference($idPreprint);
+        $shouldDisplayReviews = true; // For testing purposes, we assume reviews should always be displayed
 
         if ($shouldDisplayReviews) {
             $doi = $this->getDoiById($idPreprint);
