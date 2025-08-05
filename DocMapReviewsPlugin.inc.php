@@ -257,7 +257,7 @@ class DocMapReviewsPlugin extends GenericPlugin {
     }
 
     function validateDocMapPayload($payload) {
-        if (is_string($payload) || $payload == ["message" => "Invalid DOI requested"]) {
+        if (is_string($payload) || $payload == ["message" => "Invalid DOI requested"] || $payload == ["message" => "No Docmaps available for requested DOI"]) {
             return false;
         }
         return true;
