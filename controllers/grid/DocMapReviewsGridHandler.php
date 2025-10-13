@@ -17,7 +17,7 @@ use PKP\security\authorization\SubmissionAccessPolicy;
 use PKP\core\JSONMessage;
 use PKP\db\DAO;
 use PKP\db\DAORegistry;
-use PKP\notification\NotificationManager;
+use PKP\notification\PKPNotificationManager;
 use PKP\notification\PKPNotification;
 use PKP\security\Role;
 use PKP\plugins\PluginRegistry;
@@ -187,7 +187,7 @@ class DocMapReviewsGridHandler extends GridHandler
 
     public function sendNotification($type, $params)
     {
-        $notificationMgr = new NotificationManager();
+        $notificationMgr = new PKPNotificationManager();
         $notificationMgr->createTrivialNotification(
             Application::get()->getRequest()->getUser()->getId(),
             $type,
