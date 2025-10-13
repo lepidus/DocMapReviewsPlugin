@@ -98,7 +98,12 @@ class DocMapReviewsPlugin extends GenericPlugin
             return null;
         }
         $currentPublication = $submission->getCurrentPublication();
-        return $currentPublication ? $currentPublication->getData('pub-id::doi') : null;
+        if (!$currentPublication) {
+            return null;
+        }
+
+        $doiObject = $currentPublication->getData('doiObject');
+        return $doiObject ? $doiObject->getData('doi') : null;
     }
 
     private function getSubmissionType()
