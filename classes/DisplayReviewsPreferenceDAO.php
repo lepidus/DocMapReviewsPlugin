@@ -84,9 +84,9 @@ class DisplayReviewsPreferenceDAO extends DAO
      * Get the id of the last inserted DisplayReviewsPreference.
      * @return int
      */
-    public function getInsertId()
+    public function getInsertId(): int
     {
-        return parent::_getInsertId('display_reviews_preferences', 'id');
+        return parent::getInsertId();
     }
 
     /**
