@@ -1,19 +1,28 @@
 <?php
 
 /**
- * @brief Handle item grid row requests.
+ * @file plugins/generic/docMapReviews/controllers/grid/DocMapReviewsGridRow.php
+ *
+ * @class DocMapReviewsGridRow
+ * @ingroup plugins_generic_docMapReviews
+ *
+ * @brief Handle DocMap Reviews grid row requests.
  */
 
-import('lib.pkp.classes.controllers.grid.GridRow');
+namespace APP\plugins\generic\docMapReviews\controllers\grid;
 
-class DocMapReviewsGridRow extends GridRow {
+use PKP\controllers\grid\GridRow;
+
+class DocMapReviewsGridRow extends GridRow
+{
     /** @var boolean */
-    var $_readOnly;
+    public $_readOnly;
 
     /**
      * Constructor
      */
-    function __construct($readOnly = false) {
+    public function __construct($readOnly = false)
+    {
         $this->_readOnly = $readOnly;
         parent::__construct();
     }
@@ -24,7 +33,8 @@ class DocMapReviewsGridRow extends GridRow {
     /**
      * @copydoc GridRow::initialize()
      */
-    function initialize($request, $template = null) {
+    public function initialize($request, $template = null)
+    {
         parent::initialize($request, $template);
     }
 
@@ -32,7 +42,8 @@ class DocMapReviewsGridRow extends GridRow {
      * Determine if this grid row should be read only.
      * @return boolean
      */
-    function isReadOnly() {
+    public function isReadOnly()
+    {
         return $this->_readOnly;
     }
 }

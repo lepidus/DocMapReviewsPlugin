@@ -1,19 +1,40 @@
 <?php
 
-import('lib.pkp.classes.controllers.grid.GridHandler');
-import('plugins.generic.docMapReviews.controllers.grid.DocMapReviewsGridRow');
-import('plugins.generic.docMapReviews.controllers.grid.DocMapReviewsGridCellProvider');
+/**
+ * @file plugins/generic/docMapReviews/controllers/grid/DocMapReviewsGridHandler.php
+ *
+ * @class DocMapReviewsGridHandler
+ * @ingroup plugins_generic_docMapReviews
+ *
+ * @brief Handle DocMap Reviews grid requests.
+ */
 
-class DocMapReviewsGridHandler extends GridHandler {
-    static $plugin;
+namespace APP\plugins\generic\docMapReviews\controllers\grid;
+
+use PKP\controllers\grid\GridHandler;
+use PKP\controllers\grid\GridColumn;
+use PKP\security\authorization\SubmissionAccessPolicy;
+use PKP\core\JSONMessage;
+use PKP\db\DAO;
+use PKP\db\DAORegistry;
+use PKP\notification\NotificationManager;
+use APP\core\Application;
+use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridRow;
+use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridCellProvider;
+use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
+
+class DocMapReviewsGridHandler extends GridHandler
+{
+    public static $plugin;
 
     /** @var boolean */
-    var $_readOnly;
+    public $_readOnly;
 
     /**
      * Constructor
      */
-    function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->addRoleAssignment(
             array(ROLE_ID_MANAGER, ROLE_ID_SUB_EDITOR, ROLE_ID_ASSISTANT, ROLE_ID_AUTHOR),
@@ -30,7 +51,8 @@ class DocMapReviewsGridHandler extends GridHandler {
      * Set the DocMapReviewsPlugin plugin.
      * @param $plugin DocMapReviewsPlugin
      */
-    static function setPlugin($plugin) {
+    public static function setPlugin($plugin)
+    {
         self::$plugin = $plugin;
     }
 
@@ -38,7 +60,8 @@ class DocMapReviewsGridHandler extends GridHandler {
      * Get the submission associated with this grid.
      * @return Submission
      */
-    function getSubmission() {
+    public function getSubmission()
+    {
         return $this->getAuthorizedContextObject(ASSOC_TYPE_SUBMISSION);
     }
 
@@ -46,7 +69,8 @@ class DocMapReviewsGridHandler extends GridHandler {
      * Get whether this grid should be 'read only'
      * @return boolean
      */
-    function getReadOnly() {
+    public function getReadOnly()
+    {
         return $this->_readOnly;
     }
 
@@ -54,15 +78,16 @@ class DocMapReviewsGridHandler extends GridHandler {
      * Set the boolean for 'read only' status
      * @param boolean
      */
-    function setReadOnly($readOnly) {
+    public function setReadOnly($readOnly)
+    {
         $this->_readOnly = $readOnly;
     }
 
     /**
      * @copydoc PKPHandler::authorize()
      */
-    function authorize($request, &$args, $roleAssignments) {
-        import('lib.pkp.classes.security.authorization.SubmissionAccessPolicy');
+    public function authorize($request, &$args, $roleAssignments)
+    {
         $this->addPolicy(new SubmissionAccessPolicy($request, $args, $roleAssignments));
         return parent::authorize($request, $args, $roleAssignments);
     }
@@ -70,7 +95,8 @@ class DocMapReviewsGridHandler extends GridHandler {
     /**
      * @copydoc Gridhandler::initialize()
      */
-    function initialize($request, $args = null) {
+    public function initialize($request, $args = null)
+    {
         parent::initialize($request, $args);
 
         $gridData = array();
@@ -135,14 +161,16 @@ class DocMapReviewsGridHandler extends GridHandler {
     /**
      * @copydoc Gridhandler::getRowInstance()
      */
-    function getRowInstance() {
+    public function getRowInstance()
+    {
         return new DocMapReviewsGridRow($this->getReadOnly());
     }
 
     /**
      * @copydoc GridHandler::getJSHandler()
      */
-    public function getJSHandler() {
+    public function getJSHandler()
+    {
         return '$.pkp.plugins.generic.docMapReviews.DocMapReviewsGridHandler';
     }
 
@@ -150,16 +178,18 @@ class DocMapReviewsGridHandler extends GridHandler {
      * @param $user User
      * @return boolean
      */
-    function canAdminister($user) {
+    public function canAdminister($user)
+    {
         return true;
     }
 
-    private function isSubmissionPublished($submission) {
+    private function isSubmissionPublished($submission)
+    {
         return $submission->getData('status') === STATUS_PUBLISHED;
     }
 
-    function sendNotification($type, $params) {
-        import('classes.notification.NotificationManager');
+    public function sendNotification($type, $params)
+    {
         $notificationMgr = new NotificationManager();
         $notificationMgr->createTrivialNotification(
             Application::get()->getRequest()->getUser()->getId(),
@@ -173,13 +203,18 @@ class DocMapReviewsGridHandler extends GridHandler {
      * @param $args array
      * @param $request PKPRequest
      */
-    function allowReviewsToBeDisplayed($args, $request) {
-        if (!$request->checkCSRF()) return new JSONMessage(false);
+    public function allowReviewsToBeDisplayed($args, $request)
+    {
+        if (!$request->checkCSRF()) {
+            return new JSONMessage(false);
+        }
 
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
 
-        if ($this->isSubmissionPublished($submission)) return new JSONMessage(false);
+        if ($this->isSubmissionPublished($submission)) {
+            return new JSONMessage(false);
+        }
 
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $displayReviewsPreferenceDAO->allowDisplayReviews($submissionId);
@@ -197,12 +232,17 @@ class DocMapReviewsGridHandler extends GridHandler {
      * @param $args array
      * @param $request PKPRequest
      */
-    function disallowReviewsToBeDisplayed($args, $request) {
-        if (!$request->checkCSRF()) return new JSONMessage(false);
+    public function disallowReviewsToBeDisplayed($args, $request)
+    {
+        if (!$request->checkCSRF()) {
+            return new JSONMessage(false);
+        }
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
 
-        if ($this->isSubmissionPublished($submission)) return new JSONMessage(false);
+        if ($this->isSubmissionPublished($submission)) {
+            return new JSONMessage(false);
+        }
 
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $displayReviewsPreferenceDAO->disallowDisplayReviews($submissionId);

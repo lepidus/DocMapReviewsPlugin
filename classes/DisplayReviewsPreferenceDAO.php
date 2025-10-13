@@ -1,15 +1,29 @@
 <?php
 
-import('lib.pkp.classes.db.DAO');
-import('plugins.generic.docMapReviews.classes.DisplayReviewsPreference');
+/**
+ * @file plugins/generic/docMapReviews/classes/DisplayReviewsPreferenceDAO.php
+ *
+ * @class DisplayReviewsPreferenceDAO
+ * @ingroup plugins_generic_docMapReviews
+ *
+ * DAO for Display Reviews Preferences.
+ */
 
-class DisplayReviewsPreferenceDAO extends DAO {
+namespace APP\plugins\generic\docMapReviews\classes;
+
+use PKP\db\DAO;
+use PKP\db\DAOResultFactory;
+use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
+
+class DisplayReviewsPreferenceDAO extends DAO
+{
     /**
      * Get DisplayReviewsPreference by submission ID.
      * @param $submissionId int Submission ID
      * @return DisplayReviewsPreference
      */
-    function getBySubmissionId($submissionId) {
+    public function getBySubmissionId($submissionId)
+    {
         $result = $this->retrieve(
             'SELECT * FROM display_reviews_preferences WHERE submission_id = ?',
             [$submissionId]
@@ -23,7 +37,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
      * @param $preference DisplayReviewsPreference
      * @return Void
      */
-    function insertObject($preference) {
+    public function insertObject($preference)
+    {
         $this->update(
             'INSERT INTO display_reviews_preferences (submission_id, display_reviews) VALUES (?, ?)',
             array(
@@ -33,7 +48,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
         );
     }
 
-    function deleteBySubmissionId($submissionId) {
+    public function deleteBySubmissionId($submissionId)
+    {
         $this->update(
             'DELETE FROM display_reviews_preferences WHERE submission_id = ?',
             array(
@@ -42,7 +58,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
         );
     }
 
-    function allowDisplayReviews($submissionId) {
+    public function allowDisplayReviews($submissionId)
+    {
         $this->update(
             'UPDATE display_reviews_preferences SET display_reviews = ? WHERE submission_id = ?',
             array(
@@ -52,7 +69,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
         );
     }
 
-    function disallowDisplayReviews($submissionId) {
+    public function disallowDisplayReviews($submissionId)
+    {
         $this->update(
             'UPDATE display_reviews_preferences SET display_reviews = ? WHERE submission_id = ?',
             array(
@@ -66,7 +84,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
      * Get the id of the last inserted DisplayReviewsPreference.
      * @return int
      */
-    function getInsertId() {
+    public function getInsertId()
+    {
         return parent::_getInsertId('display_reviews_preferences', 'id');
     }
 
@@ -74,7 +93,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
      * Generate a new DisplayReviewsPreference object.
      * @return DisplayReviewsPreference
      */
-    function newDataObject() {
+    public function newDataObject()
+    {
         return new DisplayReviewsPreference();
     }
 
@@ -82,7 +102,8 @@ class DisplayReviewsPreferenceDAO extends DAO {
      * Return a new DisplayReviewsPreference object from a given row.
      * @return DisplayReviewsPreference
      */
-    function _fromRow($row) {
+    public function _fromRow($row)
+    {
         $preference = $this->newDataObject();
         $preference->setSubmissionId($row['submission_id']);
         $preference->setDisplayReviews($row['display_reviews']);

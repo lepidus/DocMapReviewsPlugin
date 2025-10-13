@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file plugins/generic/docMapReviews/classes/DisplayReviewsPreference.inc.php
+ * @file plugins/generic/docMapReviews/classes/DisplayReviewsPreference.php
  *
  * @class DisplayReviewsPreference
  * @ingroup plugins_generic_docMapReviews
@@ -9,13 +9,18 @@
  * Data object representing a Display Reviews Preference.
  */
 
-class DisplayReviewsPreference extends DataObject {
+namespace APP\plugins\generic\docMapReviews\classes;
 
+use PKP\core\DataObject;
+
+class DisplayReviewsPreference extends DataObject
+{
     /**
      * Get submission ID.
      * @return int
      */
-    function getSubmissionId(){
+    public function getSubmissionId()
+    {
         return $this->getData('submissionId');
     }
 
@@ -23,7 +28,8 @@ class DisplayReviewsPreference extends DataObject {
      * Set submission ID.
      * @param $submissionId int
      */
-    function setSubmissionId($submissionId) {
+    public function setSubmissionId($submissionId)
+    {
         return $this->setData('submissionId', $submissionId);
     }
 
@@ -31,7 +37,8 @@ class DisplayReviewsPreference extends DataObject {
      * Get display reviews flag.
      * @return bool
      */
-    function getDisplayReviews(){
+    public function getDisplayReviews()
+    {
         return $this->getData('displayReviews');
     }
 
@@ -39,7 +46,8 @@ class DisplayReviewsPreference extends DataObject {
      * Set display reviews flag.
      * @param $displayReviews bool
      */
-    function setDisplayReviews($displayReviews) {
+    public function setDisplayReviews($displayReviews)
+    {
         return $this->setData('displayReviews', $displayReviews);
     }
 

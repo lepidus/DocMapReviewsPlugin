@@ -1,15 +1,33 @@
 <?php
 
-import('lib.pkp.classes.controllers.grid.GridCellProvider');
+/**
+ * @file plugins/generic/docMapReviews/controllers/grid/DocMapReviewsGridCellProvider.php
+ *
+ * @class DocMapReviewsGridCellProvider
+ * @ingroup plugins_generic_docMapReviews
+ *
+ * @brief Provide cells for DocMap Reviews grid.
+ */
 
-class DocMapReviewsGridCellProvider extends GridCellProvider {
-    var $_submissionId;
+namespace APP\plugins\generic\docMapReviews\controllers\grid;
 
-    function setSubmissionId($submissionId) {
+use PKP\controllers\grid\GridCellProvider;
+use PKP\linkAction\LinkAction;
+use PKP\linkAction\request\AjaxAction;
+use PKP\notification\NotificationManager;
+use APP\core\Application;
+
+class DocMapReviewsGridCellProvider extends GridCellProvider
+{
+    public $_submissionId;
+
+    public function setSubmissionId($submissionId)
+    {
         $this->_submissionId = $submissionId;
     }
 
-    function getSubmissionId() {
+    public function getSubmissionId()
+    {
         return $this->_submissionId;
     }
 
@@ -19,7 +37,8 @@ class DocMapReviewsGridCellProvider extends GridCellProvider {
      *
      * @copydoc GridCellProvider::getTemplateVarsFromRowColumn()
      */
-    function getTemplateVarsFromRowColumn($row, $column) {
+    public function getTemplateVarsFromRowColumn($row, $column)
+    {
         $item = $row->getData();
         switch ($column->getId()) {
             case 'displayReviewsLabel':
@@ -32,8 +51,8 @@ class DocMapReviewsGridCellProvider extends GridCellProvider {
         return parent::getTemplateVarsFromRowColumn($row, $column);
     }
 
-    function notification($type, $message) {
-        import('classes.notification.NotificationManager');
+    public function notification($type, $message)
+    {
         $notificationMgr = new NotificationManager();
         $notificationMgr->createTrivialNotification(
             Application::get()->getRequest()->getUser()->getId(),
@@ -47,7 +66,8 @@ class DocMapReviewsGridCellProvider extends GridCellProvider {
      *
      * @copydoc GridCellProvider::getCellActions()
      */
-    function getCellActions($request, $row, $column, $position = GRID_ACTION_POSITION_DEFAULT) {
+    public function getCellActions($request, $row, $column, $position = GRID_ACTION_POSITION_DEFAULT)
+    {
         $pref = $row->getData();
         $columnId = $column->getId();
         $router = $request->getRouter();
@@ -59,7 +79,6 @@ class DocMapReviewsGridCellProvider extends GridCellProvider {
 
         $actionUrl = $router->url($request, null, null, $operation, null, $actionArgs);
 
-        import('lib.pkp.classes.linkAction.request.AjaxAction');
         $actionRequest = new AjaxAction($actionUrl);
         switch ($columnId) {
             case 'displayReviews':

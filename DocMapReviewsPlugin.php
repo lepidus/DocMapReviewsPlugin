@@ -1,6 +1,7 @@
 <?php
+
 /**
- * @file plugins/generic/docMapReviews/DocMapReviewsPlugin.inc.php
+ * @file plugins/generic/docMapReviews/DocMapReviewsPlugin.php
  *
  * Copyright (c) --
 
@@ -10,18 +11,30 @@
  * @ingroup plugins_generic_docMapReviews
  * @brief Plugin class for the DocMap Reviews plugin.
  */
-import('lib.pkp.classes.plugins.GenericPlugin');
-import('lib.pkp.classes.submission.PKPSubmission');
-import('plugins.generic.docMapReviews.DocMapReviewsSchemaMigration');
+
+namespace APP\plugins\generic\docMapReviews;
+
+use PKP\plugins\GenericPlugin;
+use PKP\plugins\Hook;
+use PKP\config\Config;
+use APP\core\Application;
+use APP\facades\Repo;
+use PKP\db\DAORegistry;
+use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreferenceDAO;
+use APP\plugins\generic\docMapReviews\DocMapReviewsSchemaMigration;
+use DateTime;
+use Exception;
 
 define('DOCMAPS_API_URL', 'https://sciety.org/docmaps/v1/articles/');
 define('DOCMAPS_JSON_VERSION', '.docmap.json');
 
-class DocMapReviewsPlugin extends GenericPlugin {
+class DocMapReviewsPlugin extends GenericPlugin
+{
     /** @var array Lazy loaded review service list */
     private $_reviewServiceList = null;
 
-    public function register($category, $path, $mainContextId = null) {
+    public function register($category, $path, $mainContextId = null)
+    {
         $success = parent::register($category, $path, $mainContextId);
 
         if (!Config::getVar('general', 'installed') || defined('RUNNING_UPGRADE')) {
@@ -29,17 +42,14 @@ class DocMapReviewsPlugin extends GenericPlugin {
         }
 
         if ($success && $this->getEnabled($mainContextId)) {
-            import('plugins.generic.docMapReviews.classes.DisplayReviewsPreference');
-            import('plugins.generic.docMapReviews.classes.DisplayReviewsPreferenceDAO');
-
             $displayReviewsPreferenceDAO = new DisplayReviewsPreferenceDAO();
             DAORegistry::registerDAO('DisplayReviewsPreferenceDAO', $displayReviewsPreferenceDAO);
 
-            HookRegistry::register('Template::Workflow::Publication', array($this, 'addToWorkflow'));
-            HookRegistry::register('TemplateManager::display',array($this, 'addGridhandlerJs'));
-            HookRegistry::register('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', array($this, 'submissionWizard'));
-            HookRegistry::register('LoadComponentHandler', array($this, 'setupGridHandler'));
-            HookRegistry::register('Templates::Preprint::Details', array($this, 'callbackSharingDisplay'));
+            Hook::add('Template::Workflow::Publication', [$this, 'addToWorkflow']);
+            Hook::add('TemplateManager::display', [$this, 'addGridhandlerJs']);
+            Hook::add('Templates::Submission::SubmissionMetadataForm::AdditionalMetadata', [$this, 'submissionWizard']);
+            Hook::add('LoadComponentHandler', [$this, 'setupGridHandler']);
+            Hook::add('Templates::Preprint::Details', [$this, 'callbackSharingDisplay']);
         }
 
         return $success;
@@ -51,7 +61,8 @@ class DocMapReviewsPlugin extends GenericPlugin {
      * The name will appear in the plugins list where editors can
      * enable and disable plugins.
      */
-    public function getDisplayName() {
+    public function getDisplayName()
+    {
         return 'DocMap Reviews';
     }
 
@@ -61,30 +72,34 @@ class DocMapReviewsPlugin extends GenericPlugin {
      * The description will appear in the plugins list where editors can
      * enable and disable plugins.
      */
-    public function getDescription() {
+    public function getDescription()
+    {
         return 'This plugin allows reviews via DocMaps to be displayed on the pre-review detail pages.';
     }
 
-    private function getAuthorId($user) {
+    private function getAuthorId($user)
+    {
         $orcid = $user->getOrcid();
         return ($orcid != "") ? $orcid : "mailto:{$user->getEmail()}";
     }
 
-    public function getDoi($submission) {
+    public function getDoi($submission)
+    {
         return $submission->getData('publications')[0]->getData('pub-id::doi');
     }
 
-    public function getDoiById($id) {
-        import('classes.submission.Submission');
-        $submission = Services::get('submission')->get($id);
+    public function getDoiById($id)
+    {
+        $submission = Repo::submission()->get($id);
         $submission = $submission->getData('publications')[0]->getData('pub-id::doi');
         return $submission;
     }
 
-    private function getSubmissionType() {
+    private function getSubmissionType()
+    {
         $applicationName = substr(Application::getName(), 0, 3);
 
-        if($applicationName == 'ops') {
+        if ($applicationName == 'ops') {
             return 'preprint';
         }
 
@@ -95,7 +110,8 @@ class DocMapReviewsPlugin extends GenericPlugin {
      * Retrieves the list of review services from the plugin settings and caches it
      * @return array List of review services, where key is the home URL and value is the inbox URL
      */
-    function getReviewServiceList() {
+    public function getReviewServiceList()
+    {
         if (
             $this->_reviewServiceList === null
             && !is_array($this->_reviewServiceList = $this->getSetting($this->getCurrentContextId(), 'reviewServiceList'))
@@ -105,7 +121,8 @@ class DocMapReviewsPlugin extends GenericPlugin {
         return $this->_reviewServiceList;
     }
 
-    public function sendHttpPostRequest($url, $data) {
+    public function sendHttpPostRequest($url, $data)
+    {
         $ch = curl_init();
         $jsonData = json_encode($data);
 
@@ -131,34 +148,39 @@ class DocMapReviewsPlugin extends GenericPlugin {
         return $result;
     }
 
-    public function getInstallMigration() {
+    public function getInstallMigration()
+    {
         return new DocMapReviewsSchemaMigration();
     }
 
     /**
      * @see Plugin::getInstallSitePluginSettingsFile()
      */
-    public function getInstallSitePluginSettingsFile() {
+    public function getInstallSitePluginSettingsFile()
+    {
         return $this->getPluginPath() . '/settings.xml';
     }
 
-    private function isSubmissionPublished($submission) {
+    private function isSubmissionPublished($submission)
+    {
         return $submission->getData('status') === STATUS_PUBLISHED;
     }
 
-    function getDisplayReviewsPreferences($submissionId) {
+    public function getDisplayReviewsPreferences($submissionId)
+    {
         /* @var $displayReviewsPreferenceDAO DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $docMapReviewsPreferencesResult = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId)->toArray();
 
-        return array_map(function($preference){
+        return array_map(function ($preference) {
             return $preference->getData('displayReviews');
         }, $docMapReviewsPreferencesResult);
     }
 
-    public function addToWorkflow($hookName, $params) {
-        $smarty =& $params[1];
-        $output =& $params[2];
+    public function addToWorkflow($hookName, $params)
+    {
+        $smarty = & $params[1];
+        $output = & $params[2];
         $submission = $smarty->get_template_vars('submission');
         $request = Application::get()->getRequest();
         $user = $request->getUser();
@@ -193,15 +215,17 @@ class DocMapReviewsPlugin extends GenericPlugin {
      * @param array $args
      * @return void
      */
-    public function submissionWizard($hookname, array $args) {
+    public function submissionWizard($hookname, array $args)
+    {
         $templateMgr = &$args[1];
         $request = $this->getRequest();
         $submissionId = $request->getUserVar('submissionId');
 
         $this->templateParameters['submissionId'] = $submissionId;
 
-        if (!empty($publicationWorkDb) && $publicationWorkDb !== '[]')
+        if (!empty($publicationWorkDb) && $publicationWorkDb !== '[]') {
             $this->templateParameters['workModel'] = $publicationWorkDb;
+        }
 
         $this->templateParameters['statusCodePublished'] = STATUS_PUBLISHED;
 
@@ -215,11 +239,11 @@ class DocMapReviewsPlugin extends GenericPlugin {
      * @param $hookName string The name of the hook being invoked
      * @param $args array The parameters to the invoked hook
      */
-    function setupGridHandler($hookName, $params) {
-        $component =& $params[0];
+    public function setupGridHandler($hookName, $params)
+    {
+        $component = & $params[0];
         if ($component == 'plugins.generic.docMapReviews.controllers.grid.DocMapReviewsGridHandler') {
-            import($component);
-            DocMapReviewsGridHandler::setPlugin($this);
+            \APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridHandler::setPlugin($this);
             return true;
         }
         return false;
@@ -228,7 +252,8 @@ class DocMapReviewsPlugin extends GenericPlugin {
     /**
      * Add custom gridhandlerJS for backend
      */
-    function addGridhandlerJs($hookName, $params) {
+    public function addGridhandlerJs($hookName, $params)
+    {
         $templateMgr = $params[0];
         $request = $this->getRequest();
         $gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'DocMapReviewsGridHandler.js';
@@ -243,11 +268,13 @@ class DocMapReviewsPlugin extends GenericPlugin {
     /**
      * Get the JavaScript URL for this plugin.
      */
-    function getJavaScriptURL() {
+    public function getJavaScriptURL()
+    {
         return Application::get()->getRequest()->getBaseUrl() . DIRECTORY_SEPARATOR . $this->getPluginPath() . DIRECTORY_SEPARATOR . 'js';
     }
 
-    function getReviewWebContent($url) {
+    public function getReviewWebContent($url)
+    {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -256,14 +283,16 @@ class DocMapReviewsPlugin extends GenericPlugin {
         return $output;
     }
 
-    function validateDocMapPayload($payload) {
+    public function validateDocMapPayload($payload)
+    {
         if (is_string($payload) || $payload == ["message" => "Invalid DOI requested"] || $payload == ["message" => "No Docmaps available for requested DOI"]) {
             return false;
         }
         return true;
     }
 
-    function getDocMapReviewsPreference($submissionId) {
+    public function getDocMapReviewsPreference($submissionId)
+    {
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $docMapReviewsPreferencesResult = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId)->toArray();
 
@@ -277,8 +306,9 @@ class DocMapReviewsPlugin extends GenericPlugin {
 
     }
 
-    function fetchDocMapReviewsByGroup($doi) {
-        $url= DOCMAPS_API_URL . $doi . DOCMAPS_JSON_VERSION;
+    public function fetchDocMapReviewsByGroup($doi)
+    {
+        $url = DOCMAPS_API_URL . $doi . DOCMAPS_JSON_VERSION;
 
         $ch = curl_init();
 
@@ -296,29 +326,29 @@ class DocMapReviewsPlugin extends GenericPlugin {
         $groupId = 0;
 
         if ($this->validateDocMapPayload($data)) {
-            foreach($data as $group){
+            foreach ($data as $group) {
                 $reviewGroups[$groupId]['name'] = $group['publisher']['name'];
                 $reviewGroups[$groupId]['logo'] = $group['publisher']['logo'];
 
                 $actions = $group['steps'][$group['first-step']]['actions'];
                 $i = 0;
 
-                foreach($actions as $action){
+                foreach ($actions as $action) {
                     $date = new DateTime($actions[$i]['outputs'][0]['published']);
                     $formattedDate = $date->format('d M Y');
                     $contentLink = '';
 
-                    foreach($actions[$i]['outputs'] as $output){
-                        foreach($output['content'] as $content){
-                            if($content['type'] == 'web-content'){
+                    foreach ($actions[$i]['outputs'] as $output) {
+                        foreach ($output['content'] as $content) {
+                            if ($content['type'] == 'web-content') {
                                 $contentLink = $content['url'];
                             }
                         }
                     }
 
-                    $reviewGroups[$groupId]['reviews'][$i]=array(
-                        'id' =>sprintf("%d%d", $groupId, $i),
-                        'name'=> $actions[$i]['participants'][0]['actor']['name'],
+                    $reviewGroups[$groupId]['reviews'][$i] = array(
+                        'id' => sprintf("%d%d", $groupId, $i),
+                        'name' => $actions[$i]['participants'][0]['actor']['name'],
                         'published' => $formattedDate,
                         'outputType' => $actions[$i]['outputs'][0]['type'],
                         'link' => $actions[$i]['outputs'][0]['content'][0]['url'],
@@ -335,14 +365,15 @@ class DocMapReviewsPlugin extends GenericPlugin {
         return $reviewGroups;
     }
 
-    function callbackSharingDisplay($hookName, $params) {
+    public function callbackSharingDisplay($hookName, $params)
+    {
         $templateMgr = $params[1];
-        $templateOutput =& $params[2];
+        $templateOutput = & $params[2];
         $request = Application::get()->getRequest();
-        $idPreprint=$request->getRouter()->getHandler()->preprint->_data['id'];
-        $idPreprint=((int) $idPreprint);
+        $idPreprint = $request->getRouter()->getHandler()->preprint->_data['id'];
+        $idPreprint = ((int) $idPreprint);
 
-//        $shouldDisplayReviews = $this->getDocMapReviewsPreference($idPreprint);
+        //        $shouldDisplayReviews = $this->getDocMapReviewsPreference($idPreprint);
         $shouldDisplayReviews = true; // For testing purposes, we assume reviews should always be displayed
 
         if ($shouldDisplayReviews) {
