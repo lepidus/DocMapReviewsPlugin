@@ -20,6 +20,7 @@ use PKP\db\DAORegistry;
 use PKP\notification\NotificationManager;
 use PKP\notification\PKPNotification;
 use PKP\security\Role;
+use PKP\plugins\PluginRegistry;
 use APP\core\Application;
 use PKP\core\PKPApplication;
 use PKP\submission\PKPSubmission;
@@ -29,7 +30,7 @@ use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
 
 class DocMapReviewsGridHandler extends GridHandler
 {
-    public static $plugin;
+    public $plugin;
 
     /** @var boolean */
     public $_readOnly;
@@ -49,15 +50,7 @@ class DocMapReviewsGridHandler extends GridHandler
                 'disallowReviewsToBeDisplayed',
             )
         );
-    }
-
-    /**
-     * Set the DocMapReviewsPlugin plugin.
-     * @param $plugin DocMapReviewsPlugin
-     */
-    public static function setPlugin($plugin)
-    {
-        self::$plugin = $plugin;
+        $this->plugin = PluginRegistry::getPlugin('generic', DOC_MAP_REVIEWS_PLUGIN_NAME);
     }
 
     /**
@@ -105,7 +98,7 @@ class DocMapReviewsGridHandler extends GridHandler
 
         $gridData = array();
 
-        if (!$this::$plugin) {
+        if (!$this->plugin) {
             return;
         }
 

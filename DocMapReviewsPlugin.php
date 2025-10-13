@@ -24,7 +24,6 @@ use PKP\submission\PKPSubmission;
 use PKP\db\DAORegistry;
 use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreferenceDAO;
 use APP\plugins\generic\docMapReviews\DocMapReviewsSchemaMigration;
-use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridHandler;
 use DateTime;
 use Exception;
 
@@ -206,6 +205,7 @@ class DocMapReviewsPlugin extends GenericPlugin
             'authorId' => $this->getAuthorId($user),
             'isPublished' => $this->isSubmissionPublished($submission),
             'doi' => $this->getDoi($submission),
+            'submissionId' => $submission->getData('id'),
             'displayReviewsPreferences' => $this->getDisplayReviewsPreferences($submission->getData('id')),
         ]);
 
@@ -250,7 +250,7 @@ class DocMapReviewsPlugin extends GenericPlugin
     {
         $component = & $params[0];
         if ($component == 'plugins.generic.docMapReviews.controllers.grid.DocMapReviewsGridHandler') {
-            DocMapReviewsGridHandler::setPlugin($this);
+            define('DOC_MAP_REVIEWS_PLUGIN_NAME', $this->getName());
             return true;
         }
         return false;

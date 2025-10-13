@@ -1,12 +1,5 @@
 <link rel="stylesheet" type="text/css" href="/plugins/generic/docMapReviews/styles/docMapReviews.css">
 
-<script type="text/javascript">
-    $(function() {ldelim}
-        $('#displayReviewsPreferences').pkpHandler('$.pkp.controllers.form.AjaxFormHandler');
-        {rdelim});
-</script>
-
-
 {load_header context="backend"}
 
 <div id="docMapReviews">
