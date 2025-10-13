@@ -10,9 +10,8 @@
 namespace APP\plugins\generic\docMapReviews;
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Builder;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Support\Facades\Schema;
 
 class DocMapReviewsSchemaMigration extends Migration
 {
@@ -22,7 +21,7 @@ class DocMapReviewsSchemaMigration extends Migration
      */
     public function up(): void
     {
-        Capsule::schema()->create('display_reviews_preferences', function (Blueprint $table) {
+        Schema::create('display_reviews_preferences', function (Blueprint $table) {
             $table->bigInteger('submission_id');
             $table->boolean('display_reviews');
         });
