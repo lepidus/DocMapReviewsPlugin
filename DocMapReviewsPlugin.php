@@ -85,14 +85,18 @@ class DocMapReviewsPlugin extends GenericPlugin
 
     public function getDoi($submission)
     {
-        return $submission->getData('publications')[0]->getData('pub-id::doi');
+        $currentPublication = $submission->getCurrentPublication();
+        return $currentPublication ? $currentPublication->getData('pub-id::doi') : null;
     }
 
     public function getDoiById($id)
     {
         $submission = Repo::submission()->get($id);
-        $submission = $submission->getData('publications')[0]->getData('pub-id::doi');
-        return $submission;
+        if (!$submission) {
+            return null;
+        }
+        $currentPublication = $submission->getCurrentPublication();
+        return $currentPublication ? $currentPublication->getData('pub-id::doi') : null;
     }
 
     private function getSubmissionType()
@@ -181,7 +185,7 @@ class DocMapReviewsPlugin extends GenericPlugin
     {
         $smarty = & $params[1];
         $output = & $params[2];
-        $submission = $smarty->get_template_vars('submission');
+        $submission = $smarty->getTemplateVars('submission');
         $request = Application::get()->getRequest();
         $user = $request->getUser();
 
