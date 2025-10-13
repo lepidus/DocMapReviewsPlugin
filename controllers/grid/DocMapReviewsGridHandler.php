@@ -18,7 +18,11 @@ use PKP\core\JSONMessage;
 use PKP\db\DAO;
 use PKP\db\DAORegistry;
 use PKP\notification\NotificationManager;
+use PKP\notification\PKPNotification;
+use PKP\security\Role;
 use APP\core\Application;
+use PKP\core\PKPApplication;
+use PKP\submission\PKPSubmission;
 use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridRow;
 use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridCellProvider;
 use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
@@ -37,7 +41,7 @@ class DocMapReviewsGridHandler extends GridHandler
     {
         parent::__construct();
         $this->addRoleAssignment(
-            array(ROLE_ID_MANAGER, ROLE_ID_SUB_EDITOR, ROLE_ID_ASSISTANT, ROLE_ID_AUTHOR),
+            array(Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT, Role::ROLE_ID_AUTHOR),
             array(
                 'fetchGrid',
                 'fetchRow',
@@ -62,7 +66,7 @@ class DocMapReviewsGridHandler extends GridHandler
      */
     public function getSubmission()
     {
-        return $this->getAuthorizedContextObject(ASSOC_TYPE_SUBMISSION);
+        return $this->getAuthorizedContextObject(PKPApplication::ASSOC_TYPE_SUBMISSION);
     }
 
     /**
@@ -185,7 +189,7 @@ class DocMapReviewsGridHandler extends GridHandler
 
     private function isSubmissionPublished($submission)
     {
-        return $submission->getData('status') === STATUS_PUBLISHED;
+        return $submission->getData('status') === PKPSubmission::STATUS_PUBLISHED;
     }
 
     public function sendNotification($type, $params)
@@ -220,7 +224,7 @@ class DocMapReviewsGridHandler extends GridHandler
         $displayReviewsPreferenceDAO->allowDisplayReviews($submissionId);
 
         $this->sendNotification(
-            NOTIFICATION_TYPE_SUCCESS,
+            PKPNotification::NOTIFICATION_TYPE_SUCCESS,
             ['contents' => __('plugins.generic.docMapReviews.displayReviewPreferencesUpdatedDisplayed')]
         );
 
@@ -248,10 +252,14 @@ class DocMapReviewsGridHandler extends GridHandler
         $displayReviewsPreferenceDAO->disallowDisplayReviews($submissionId);
 
         $this->sendNotification(
-            NOTIFICATION_TYPE_SUCCESS,
+            PKPNotification::NOTIFICATION_TYPE_SUCCESS,
             ['contents' => __('plugins.generic.docMapReviews.displayReviewPreferencesUpdatedNotDisplayed')],
         );
         return DAO::getDataChangedEvent($submissionId);
     }
 
+}
+
+if (!PKP_STRICT_MODE) {
+    class_alias('\APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridHandler', '\DocMapReviewsGridHandler');
 }

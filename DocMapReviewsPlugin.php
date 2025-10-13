@@ -17,11 +17,14 @@ namespace APP\plugins\generic\docMapReviews;
 use PKP\plugins\GenericPlugin;
 use PKP\plugins\Hook;
 use PKP\config\Config;
+use PKP\core\PKPApplication;
 use APP\core\Application;
 use APP\facades\Repo;
+use PKP\submission\PKPSubmission;
 use PKP\db\DAORegistry;
 use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreferenceDAO;
 use APP\plugins\generic\docMapReviews\DocMapReviewsSchemaMigration;
+use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridHandler;
 use DateTime;
 use Exception;
 
@@ -191,7 +194,7 @@ class DocMapReviewsPlugin extends GenericPlugin
 
         $smarty->assign(
             'userIsManager',
-            $user->hasRole(Application::getWorkflowTypeRoles()[WORKFLOW_TYPE_EDITORIAL], $request->getContext()->getId())
+            $user->hasRole(Application::getWorkflowTypeRoles()[PKPApplication::WORKFLOW_TYPE_EDITORIAL], $request->getContext()->getId())
         );
 
         $smarty->assign([
@@ -231,7 +234,7 @@ class DocMapReviewsPlugin extends GenericPlugin
             $this->templateParameters['workModel'] = $publicationWorkDb;
         }
 
-        $this->templateParameters['statusCodePublished'] = STATUS_PUBLISHED;
+        $this->templateParameters['statusCodePublished'] = PKPSubmission::STATUS_PUBLISHED;
 
         $templateMgr->assign($this->templateParameters);
 
@@ -247,7 +250,7 @@ class DocMapReviewsPlugin extends GenericPlugin
     {
         $component = & $params[0];
         if ($component == 'plugins.generic.docMapReviews.controllers.grid.DocMapReviewsGridHandler') {
-            \APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridHandler::setPlugin($this);
+            DocMapReviewsGridHandler::setPlugin($this);
             return true;
         }
         return false;
@@ -259,8 +262,7 @@ class DocMapReviewsPlugin extends GenericPlugin
     public function addGridhandlerJs($hookName, $params)
     {
         $templateMgr = $params[0];
-        $request = $this->getRequest();
-        $gridHandlerJs = $this->getJavaScriptURL($request, false) . DIRECTORY_SEPARATOR . 'DocMapReviewsGridHandler.js';
+        $gridHandlerJs = $this->getJavaScriptURL() . DIRECTORY_SEPARATOR . 'DocMapReviewsGridHandler.js';
         $templateMgr->addJavaScript(
             'DocMapReviewsGridHandlerJs',
             $gridHandlerJs,
