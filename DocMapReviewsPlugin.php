@@ -333,7 +333,7 @@ class DocMapReviewsPlugin extends GenericPlugin
         // close curl resource to free up system resources
         curl_close($ch);
         $data = json_decode($result, true);
-        $reviewGroups = array();
+        $reviewGroups = [];
         $groupId = 0;
 
         if ($this->validateDocMapPayload($data)) {
@@ -357,14 +357,14 @@ class DocMapReviewsPlugin extends GenericPlugin
                         }
                     }
 
-                    $reviewGroups[$groupId]['reviews'][$i] = array(
+                    $reviewGroups[$groupId]['reviews'][$i] = [
                         'id' => sprintf("%d%d", $groupId, $i),
                         'name' => $actions[$i]['participants'][0]['actor']['name'],
                         'published' => $formattedDate,
                         'outputType' => $actions[$i]['outputs'][0]['type'],
                         'link' => $actions[$i]['outputs'][0]['content'][0]['url'],
                         'webContent' => $this->getReviewWebContent($contentLink),
-                    );
+                    ];
 
                     $i++;
                 }
@@ -392,13 +392,11 @@ class DocMapReviewsPlugin extends GenericPlugin
         if ($shouldDisplayReviews) {
             $doi = $this->getDoiById($idPreprint);
             $reviewGroups = $this->fetchDocMapReviewsByGroup($doi);
-            $templateMgr->assign(
-                array(
-                    'doi' => $doi,
-                    'idPreprint' => $idPreprint,
-                    'reviewGroups' => $reviewGroups,
-                )
-            );
+            $templateMgr->assign([
+                'doi' => $doi,
+                'idPreprint' => $idPreprint,
+                'reviewGroups' => $reviewGroups,
+            ]);
             $templateOutput .= $templateMgr->fetch($this->getTemplateResource('docMapReviews.tpl'));
         }
 
