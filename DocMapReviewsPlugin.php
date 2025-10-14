@@ -227,15 +227,16 @@ class DocMapReviewsPlugin extends GenericPlugin
         $request = $this->getRequest();
         $submissionId = $request->getUserVar('submissionId');
 
-        $this->templateParameters['submissionId'] = $submissionId;
+        $templateParams = [];
+        $templateParams['submissionId'] = $submissionId;
 
         if (!empty($publicationWorkDb) && $publicationWorkDb !== '[]') {
-            $this->templateParameters['workModel'] = $publicationWorkDb;
+            $templateParams['workModel'] = $publicationWorkDb;
         }
 
-        $this->templateParameters['statusCodePublished'] = PKPSubmission::STATUS_PUBLISHED;
+        $templateParams['statusCodePublished'] = PKPSubmission::STATUS_PUBLISHED;
 
-        $templateMgr->assign($this->templateParameters);
+        $templateMgr->assign($templateParams);
 
         $templateMgr->display($this->getTemplateResource("submission/form/submissionWizard.tpl"));
     }
