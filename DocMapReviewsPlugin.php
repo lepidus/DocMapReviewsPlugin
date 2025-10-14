@@ -85,12 +85,6 @@ class DocMapReviewsPlugin extends GenericPlugin
         return ($orcid != "") ? $orcid : "mailto:{$user->getEmail()}";
     }
 
-    public function getDoi($submission)
-    {
-        $currentPublication = $submission->getCurrentPublication();
-        return $currentPublication ? $currentPublication->getData('pub-id::doi') : null;
-    }
-
     public function getDoiById($id)
     {
         $submission = Repo::submission()->get($id);
@@ -209,7 +203,7 @@ class DocMapReviewsPlugin extends GenericPlugin
             'actorName' => $user->getFullName(),
             'authorId' => $this->getAuthorId($user),
             'isPublished' => $this->isSubmissionPublished($submission),
-            'doi' => $this->getDoi($submission),
+            'doi' => $this->getDoiById($submission->getId()),
             'submissionId' => $submission->getData('id'),
             'displayReviewsPreferences' => $this->getDisplayReviewsPreferences($submission->getData('id')),
         ]);
