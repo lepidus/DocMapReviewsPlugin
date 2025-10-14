@@ -168,7 +168,7 @@ class DocMapReviewsPlugin extends GenericPlugin
 
     private function isSubmissionPublished($submission)
     {
-        return $submission->getData('status') === STATUS_PUBLISHED;
+        return $submission->getData('status') === PKPSubmission::STATUS_PUBLISHED;
     }
 
     public function getDisplayReviewsPreferences($submissionId)
