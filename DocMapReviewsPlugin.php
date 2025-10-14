@@ -380,9 +380,11 @@ class DocMapReviewsPlugin extends GenericPlugin
     {
         $templateMgr = $params[1];
         $templateOutput = & $params[2];
-        $request = Application::get()->getRequest();
-        $idPreprint = $request->getRouter()->getHandler()->preprint->_data['id'];
-        $idPreprint = ((int) $idPreprint);
+        $preprint = $templateMgr->getTemplateVars('preprint');
+        if (!$preprint) {
+            return false;
+        }
+        $idPreprint = $preprint->getId();
 
         //        $shouldDisplayReviews = $this->getDocMapReviewsPreference($idPreprint);
         $shouldDisplayReviews = true; // For testing purposes, we assume reviews should always be displayed
