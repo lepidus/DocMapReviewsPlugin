@@ -42,13 +42,13 @@ class DocMapReviewsGridHandler extends GridHandler
     {
         parent::__construct();
         $this->addRoleAssignment(
-            array(Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT, Role::ROLE_ID_AUTHOR),
-            array(
+            [Role::ROLE_ID_MANAGER, Role::ROLE_ID_SUB_EDITOR, Role::ROLE_ID_ASSISTANT, Role::ROLE_ID_AUTHOR],
+            [
                 'fetchGrid',
                 'fetchRow',
                 'allowReviewsToBeDisplayed',
                 'disallowReviewsToBeDisplayed',
-            )
+            ]
         );
         $this->plugin = PluginRegistry::getPlugin('generic', DOC_MAP_REVIEWS_PLUGIN_NAME);
     }
@@ -96,7 +96,7 @@ class DocMapReviewsGridHandler extends GridHandler
     {
         parent::initialize($request, $args);
 
-        $gridData = array();
+        $gridData = [];
 
         if (!$this->plugin) {
             return;
@@ -118,10 +118,10 @@ class DocMapReviewsGridHandler extends GridHandler
             $pref = reset($prefs);
         }
 
-        $gridData[0] = array(
+        $gridData[0] = [
             'label' =>  __("plugins.generic.docMapReviews.displayReviews"),
             'displayReviews' => $pref->getData('displayReviews'),
-        );
+        ];
 
         $this->setGridDataElements($gridData);
 

@@ -42,9 +42,9 @@ class DocMapReviewsGridCellProvider extends GridCellProvider
         $item = $row->getData();
         switch ($column->getId()) {
             case 'displayReviewsLabel':
-                return array('label' => $item['label']);
+                return ['label' => $item['label']];
             case 'displayReviews':
-                return array('selected' => $item['displayReviews']);
+                return ['selected' => $item['displayReviews']];
             default:
                 break;
         }
@@ -82,14 +82,14 @@ class DocMapReviewsGridCellProvider extends GridCellProvider
         $actionRequest = new AjaxAction($actionUrl);
         switch ($columnId) {
             case 'displayReviews':
-                return array(
+                return [
                     new LinkAction(
                         $operation,
                         $actionRequest,
                         __(""),
                         null
                     )
-                );
+                ];
         }
 
         return parent::getCellActions($request, $row, $column, $position);
