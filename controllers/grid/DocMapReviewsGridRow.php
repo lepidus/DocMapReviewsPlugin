@@ -31,14 +31,6 @@ class DocMapReviewsGridRow extends GridRow
     // Overridden template methods
     //
     /**
-     * @copydoc GridRow::initialize()
-     */
-    public function initialize($request, $template = null)
-    {
-        parent::initialize($request, $template);
-    }
-
-    /**
      * Determine if this grid row should be read only.
      * @return boolean
      */
