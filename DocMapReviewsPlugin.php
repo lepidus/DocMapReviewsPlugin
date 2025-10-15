@@ -126,33 +126,6 @@ class DocMapReviewsPlugin extends GenericPlugin
         return $this->_reviewServiceList;
     }
 
-    public function sendHttpPostRequest($url, $data)
-    {
-        $ch = curl_init();
-        $jsonData = json_encode($data);
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-        ));
-
-        $response = curl_exec($ch);
-        $result = json_decode($response);
-
-        if (curl_errno($ch)) {
-            throw new Exception('cURL error: ' . curl_error($ch));
-        }
-
-        curl_close($ch);
-
-        return $result;
-    }
-
     public function getInstallMigration()
     {
         return new DocMapReviewsSchemaMigration();
@@ -229,10 +202,6 @@ class DocMapReviewsPlugin extends GenericPlugin
 
         $templateParams = [];
         $templateParams['submissionId'] = $submissionId;
-
-        if (!empty($publicationWorkDb) && $publicationWorkDb !== '[]') {
-            $templateParams['workModel'] = $publicationWorkDb;
-        }
 
         $templateParams['statusCodePublished'] = PKPSubmission::STATUS_PUBLISHED;
 
