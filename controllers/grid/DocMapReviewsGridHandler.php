@@ -211,7 +211,9 @@ class DocMapReviewsGridHandler extends GridHandler
             ['contents' => __('plugins.generic.docMapReviews.displayReviewPreferencesUpdatedDisplayed')]
         );
 
-        return DAO::getDataChangedEvent($submissionId);
+        $json = new JSONMessage(true);
+        $json->setEvent('dataChanged', [$submissionId]);
+        return $json;
     }
 
     /**
@@ -241,7 +243,9 @@ class DocMapReviewsGridHandler extends GridHandler
             PKPNotification::NOTIFICATION_TYPE_SUCCESS,
             ['contents' => __('plugins.generic.docMapReviews.displayReviewPreferencesUpdatedNotDisplayed')],
         );
-        return DAO::getDataChangedEvent($submissionId);
+        $json = new JSONMessage(true);
+        $json->setEvent('dataChanged', [$submissionId]);
+        return $json;
     }
 
 }
