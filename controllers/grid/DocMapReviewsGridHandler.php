@@ -98,10 +98,6 @@ class DocMapReviewsGridHandler extends GridHandler
 
         $gridData = [];
 
-        if (!$this->plugin) {
-            return;
-        }
-
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
