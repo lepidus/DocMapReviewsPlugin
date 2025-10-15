@@ -146,13 +146,11 @@ class DocMapReviewsPlugin extends GenericPlugin
 
     public function getDisplayReviewsPreferences($submissionId)
     {
-        /* @var $displayReviewsPreferenceDAO DisplayReviewsPreferenceDAO */
+        /** @var DisplayReviewsPreferenceDAO $displayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
-        $docMapReviewsPreferencesResult = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId)->toArray();
+        $preference = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId);
 
-        return array_map(function ($preference) {
-            return $preference->getData('displayReviews');
-        }, $docMapReviewsPreferencesResult);
+        return $preference ? $preference->getData('displayReviews') : true;
     }
 
     public function addToWorkflow($hookName, $params)
@@ -268,17 +266,11 @@ class DocMapReviewsPlugin extends GenericPlugin
 
     public function getDocMapReviewsPreference($submissionId)
     {
+        /** @var DisplayReviewsPreferenceDAO $displayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
-        $docMapReviewsPreferencesResult = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId)->toArray();
+        $preference = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId);
 
-        if (empty($docMapReviewsPreferencesResult)) {
-            // No preference set, default to true
-            return true;
-        } else {
-            $pref = reset($docMapReviewsPreferencesResult);
-            return $pref->getData('displayReviews');
-        }
-
+        return $preference ? $preference->getData('displayReviews') : true;
     }
 
     public function fetchDocMapReviewsByGroup($doi)

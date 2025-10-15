@@ -26,7 +26,7 @@ use PKP\core\PKPApplication;
 use PKP\submission\PKPSubmission;
 use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridRow;
 use APP\plugins\generic\docMapReviews\controllers\grid\DocMapReviewsGridCellProvider;
-use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
+use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreferenceDAO;
 
 class DocMapReviewsGridHandler extends GridHandler
 {
@@ -100,19 +100,10 @@ class DocMapReviewsGridHandler extends GridHandler
 
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
+        /** @var DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
 
-        $prefs = $displayReviewsPreferenceDAO->getBySubmissionId($submission->getId())->toArray();
-
-        if (empty($prefs)) {
-            $displayReviewsPreference = new DisplayReviewsPreference();
-            $displayReviewsPreference->setSubmissionId($submissionId);
-            $displayReviewsPreference->setDisplayReviews(true);
-            $displayReviewsPreferenceDAO->insertObject($displayReviewsPreference);
-            $pref = $displayReviewsPreference;
-        } else {
-            $pref = reset($prefs);
-        }
+        $pref = $displayReviewsPreferenceDAO->getOrCreate($submissionId);
 
         $gridData[0] = [
             'label' =>  __("plugins.generic.docMapReviews.displayReviews"),
@@ -209,8 +200,11 @@ class DocMapReviewsGridHandler extends GridHandler
             return new JSONMessage(false);
         }
 
+        /** @var DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
-        $displayReviewsPreferenceDAO->allowDisplayReviews($submissionId);
+        $preference = $displayReviewsPreferenceDAO->getOrCreate($submissionId);
+        $preference->setDisplayReviews(true);
+        $displayReviewsPreferenceDAO->updateObject($preference);
 
         $this->sendNotification(
             PKPNotification::NOTIFICATION_TYPE_SUCCESS,
@@ -237,8 +231,11 @@ class DocMapReviewsGridHandler extends GridHandler
             return new JSONMessage(false);
         }
 
+        /** @var DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
-        $displayReviewsPreferenceDAO->disallowDisplayReviews($submissionId);
+        $preference = $displayReviewsPreferenceDAO->getOrCreate($submissionId);
+        $preference->setDisplayReviews(false);
+        $displayReviewsPreferenceDAO->updateObject($preference);
 
         $this->sendNotification(
             PKPNotification::NOTIFICATION_TYPE_SUCCESS,

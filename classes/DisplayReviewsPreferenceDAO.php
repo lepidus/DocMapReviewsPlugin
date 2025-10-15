@@ -11,73 +11,80 @@
 
 namespace APP\plugins\generic\docMapReviews\classes;
 
+use Illuminate\Support\Facades\DB;
 use PKP\db\DAO;
-use PKP\db\DAOResultFactory;
 use APP\plugins\generic\docMapReviews\classes\DisplayReviewsPreference;
 
 class DisplayReviewsPreferenceDAO extends DAO
 {
     /**
      * Get DisplayReviewsPreference by submission ID.
-     * @param $submissionId int Submission ID
+     * @param int $submissionId Submission ID
+     * @return ?DisplayReviewsPreference
+     */
+    public function getBySubmissionId(int $submissionId): ?DisplayReviewsPreference
+    {
+        $row = DB::table('display_reviews_preferences')
+            ->where('submission_id', '=', $submissionId)
+            ->first();
+
+        return $row ? $this->_fromRow((array) $row) : null;
+    }
+
+    /**
+     * Get or create DisplayReviewsPreference by submission ID.
+     * If preference doesn't exist, creates one with displayReviews = true.
+     * @param int $submissionId Submission ID
      * @return DisplayReviewsPreference
      */
-    public function getBySubmissionId($submissionId)
+    public function getOrCreate(int $submissionId): DisplayReviewsPreference
     {
-        $result = $this->retrieve(
-            'SELECT * FROM display_reviews_preferences WHERE submission_id = ?',
-            [$submissionId]
-        );
+        $preference = $this->getBySubmissionId($submissionId);
 
-        return new DAOResultFactory($result, $this, '_fromRow');
+        if (!$preference) {
+            $preference = $this->newDataObject();
+            $preference->setSubmissionId($submissionId);
+            $preference->setDisplayReviews(true);
+            $this->insertObject($preference);
+        }
+
+        return $preference;
     }
 
     /**
      * Insert a DisplayReviewsPreference.
-     * @param $preference DisplayReviewsPreference
-     * @return Void
+     * @param DisplayReviewsPreference $preference
      */
-    public function insertObject($preference)
+    public function insertObject(DisplayReviewsPreference $preference): void
     {
-        $this->update(
-            'INSERT INTO display_reviews_preferences (submission_id, display_reviews) VALUES (?, ?)',
-            array(
-                $preference->getSubmissionId(),
-                (bool) $preference->getDisplayReviews(),
-            )
-        );
+        DB::table('display_reviews_preferences')->insert([
+            'submission_id' => $preference->getSubmissionId(),
+            'display_reviews' => (int) $preference->getDisplayReviews(),
+        ]);
     }
 
-    public function deleteBySubmissionId($submissionId)
+    /**
+     * Update a DisplayReviewsPreference.
+     * @param DisplayReviewsPreference $preference
+     */
+    public function updateObject(DisplayReviewsPreference $preference): void
     {
-        $this->update(
-            'DELETE FROM display_reviews_preferences WHERE submission_id = ?',
-            array(
-                (int) $submissionId,
-            )
-        );
+        DB::table('display_reviews_preferences')
+            ->where('submission_id', '=', $preference->getSubmissionId())
+            ->update([
+                'display_reviews' => (int) $preference->getDisplayReviews(),
+            ]);
     }
 
-    public function allowDisplayReviews($submissionId)
+    /**
+     * Delete DisplayReviewsPreference by submission ID.
+     * @param int $submissionId
+     */
+    public function deleteBySubmissionId(int $submissionId): void
     {
-        $this->update(
-            'UPDATE display_reviews_preferences SET display_reviews = ? WHERE submission_id = ?',
-            array(
-                true,
-                $submissionId,
-            )
-        );
-    }
-
-    public function disallowDisplayReviews($submissionId)
-    {
-        $this->update(
-            'UPDATE display_reviews_preferences SET display_reviews = ? WHERE submission_id = ?',
-            array(
-                false,
-                $submissionId,
-            )
-        );
+        DB::table('display_reviews_preferences')
+            ->where('submission_id', '=', $submissionId)
+            ->delete();
     }
 
     /**
@@ -100,9 +107,10 @@ class DisplayReviewsPreferenceDAO extends DAO
 
     /**
      * Return a new DisplayReviewsPreference object from a given row.
+     * @param array $row
      * @return DisplayReviewsPreference
      */
-    public function _fromRow($row)
+    public function _fromRow(array $row): DisplayReviewsPreference
     {
         $preference = $this->newDataObject();
         $preference->setSubmissionId($row['submission_id']);
