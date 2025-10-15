@@ -34,7 +34,6 @@
                         </div>
                     {/foreach}
                 </div>
-{*                <hr>*}
             {/foreach}
             {else}
             <p>{translate key="plugins.generic.docMapReviews.noReviewsAvailable"}</p>
