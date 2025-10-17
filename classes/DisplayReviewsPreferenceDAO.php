@@ -33,7 +33,7 @@ class DisplayReviewsPreferenceDAO extends DAO
 
     /**
      * Get or create DisplayReviewsPreference by submission ID.
-     * If preference doesn't exist, creates one with displayReviews = true.
+     * If preference doesn't exist, creates one with displayReviews = false.
      * @param int $submissionId Submission ID
      * @return DisplayReviewsPreference
      */
@@ -44,7 +44,7 @@ class DisplayReviewsPreferenceDAO extends DAO
         if (!$preference) {
             $preference = $this->newDataObject();
             $preference->setSubmissionId($submissionId);
-            $preference->setDisplayReviews(true);
+            $preference->setDisplayReviews(false);
             $this->insertObject($preference);
         }
 

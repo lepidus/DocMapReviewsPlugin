@@ -150,7 +150,7 @@ class DocMapReviewsPlugin extends GenericPlugin
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $preference = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId);
 
-        return $preference ? $preference->getData('displayReviews') : true;
+        return $preference ? $preference->getData('displayReviews') : false;
     }
 
     public function addToWorkflow($hookName, $params)
@@ -270,7 +270,7 @@ class DocMapReviewsPlugin extends GenericPlugin
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $preference = $displayReviewsPreferenceDAO->getBySubmissionId($submissionId);
 
-        return $preference ? $preference->getData('displayReviews') : true;
+        return $preference ? $preference->getData('displayReviews') : false;
     }
 
     public function fetchDocMapReviewsByGroup($doi)
