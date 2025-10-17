@@ -1,29 +1,32 @@
 msgid "plugins.generic.docMapReviews.displayName"
-msgstr "Mostrar reseñas"
+msgstr "Mostrar Revisión"
 
 msgid "plugins.generic.docMapReviews.description"
 msgstr "Este complemento permite que las revisiones de preimpresión se muestren en la página de detalles de la preimpresión."
 
 msgid "plugins.generic.docMapReviews.reviews"
-msgstr "Reseñas"
+msgstr "Revisión"
 
 msgid "plugins.generic.docMapReviews.displayReviews"
-msgstr "Mostrar reseñas"
+msgstr "Mostrar Revisión"
+
+msgid "plugins.generic.docMapReviews.hideReviews"
+msgstr "Ocultar Revisión"
 
 msgid "plugins.generic.docMapReviews.preferences"
 msgstr "Preferencias"
 
 msgid "plugins.generic.docMapReviews.noReviewsAvailable"
-msgstr "No hay reseñas disponibles"
+msgstr "No hay Revisión disponibles"
 
 msgid "plugins.generic.docMapReviews.displayReviewPreferencesUpdatedDisplayed"
-msgstr "Se mostrarán reseñas"
+msgstr "Se mostrarán Revisión"
 
 msgid "plugins.generic.docMapReviews.displayReviewPreferencesUpdatedNotDisplayed"
-msgstr "Las reseñas no se mostrarán"
+msgstr "Las Revisión no se mostrarán"
 
 msgid "plugins.generic.docMapReviews.displayReviewsPreferences"
-msgstr "Mostrar preferencias de reseñas"
+msgstr "Mostrar preferencias de Revisión"
 
 msgid "plugins.generic.docMapReviews.prePubDescriptionPartOne"
 msgstr "Puede optar por mostrar en la página pública del preprint las evaluaciones recibidas de las opciones de evaluaciones seleccionadas anteriormente, si su preprint es aceptado. Si elige mostrar las evaluaciones, todas las evaluaciones serán visibles para cualquiera que vea el preprint. No puede elegir qué evaluaciones mostrar."

@@ -10,6 +10,9 @@ msgstr "Reviews"
 msgid "plugins.generic.docMapReviews.displayReviews"
 msgstr "Display Reviews"
 
+msgid "plugins.generic.docMapReviews.hideReviews"
+msgstr "Hide Reviews"
+
 msgid "plugins.generic.docMapReviews.preferences"
 msgstr "Preferences"
 

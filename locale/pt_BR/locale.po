@@ -1,14 +1,17 @@
 msgid "plugins.generic.docMapReviews.displayName"
-msgstr "Exibir comentários"
+msgstr "Exibir avaliações"
 
 msgid "plugins.generic.docMapReviews.description"
 msgstr "Este plugin permite que revisões de pré-impressão sejam exibidas na página de detalhes da pré-impressão."
 
 msgid "plugins.generic.docMapReviews.reviews"
-msgstr "Comentários"
+msgstr "Avaliações"
 
 msgid "plugins.generic.docMapReviews.displayReviews"
-msgstr "Exibir comentários"
+msgstr "Exibir avaliações"
+
+msgid "plugins.generic.docMapReviews.hideReviews"
+msgstr "Ocultar avaliações"
 
 msgid "plugins.generic.docMapReviews.preferences"
 msgstr "Preferências"
@@ -17,7 +20,7 @@ msgid "plugins.generic.docMapReviews.noReviewsAvailable"
 msgstr "Nenhuma avaliação disponível"
 
 msgid "plugins.generic.docMapReviews.displayReviewPreferencesUpdatedDisplayed"
-msgstr "Os comentários serão exibidos"
+msgstr "As avaliações serão exibidas"
 
 msgid "plugins.generic.docMapReviews.displayReviewPreferencesUpdatedNotDisplayed"
 msgstr "As avaliações não serão exibidas"

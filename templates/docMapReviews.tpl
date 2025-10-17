@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="/plugins/generic/docMapReviews/styles/docMapReviews.css">
 <script type="text/javascript" src="/plugins/generic/docMapReviews/js/docMapReviews.js"></script>
 <div class="item prereview">
-    <h2>Reviews</h2>
+    <h2>{translate key="plugins.generic.docMapReviews.reviews"}</h2>
     <div class="review-groups-container">
         {if !empty($reviewGroups)}
             {foreach item=group from=$reviewGroups}
@@ -22,11 +22,11 @@
                             </div>
 
                             <div id='btn-{$review.id}' class='more see-hide-review-button' onclick='more("{$review.id}")'>
-                                <a>Show Review</a>
+                                <a>{translate key="plugins.generic.docMapReviews.displayReviews"}</a>
                                 <a>►</a>
                             </div>
                             <div id='less-{$review.id}' class='less see-hide-review-button' onclick='less("{$review.id}")'>
-                                <a>Hide Review</a>
+                                <a>{translate key="plugins.generic.docMapReviews.hideReviews"}</a>
                                 <a>▼</a>
                             </div>
 
