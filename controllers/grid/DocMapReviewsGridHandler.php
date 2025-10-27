@@ -196,13 +196,6 @@ class DocMapReviewsGridHandler extends GridHandler
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
 
-        if ($this->isSubmissionPublished($submission)) {
-            $latestPublication = $submission->getLatestPublication();
-            if ($latestPublication->getData('status') === PKPSubmission::STATUS_PUBLISHED) {
-                return new JSONMessage(false);
-            }
-        }
-
         /** @var DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
         $preference = $displayReviewsPreferenceDAO->getOrCreate($submissionId);
@@ -231,13 +224,6 @@ class DocMapReviewsGridHandler extends GridHandler
         }
         $submission = $this->getSubmission();
         $submissionId = $submission->getId();
-
-        if ($this->isSubmissionPublished($submission)) {
-            $latestPublication = $submission->getLatestPublication();
-            if ($latestPublication->getData('status') === PKPSubmission::STATUS_PUBLISHED) {
-                return new JSONMessage(false);
-            }
-        }
 
         /** @var DisplayReviewsPreferenceDAO */
         $displayReviewsPreferenceDAO = DAORegistry::getDAO('DisplayReviewsPreferenceDAO');
