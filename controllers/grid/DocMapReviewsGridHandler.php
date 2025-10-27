@@ -197,7 +197,10 @@ class DocMapReviewsGridHandler extends GridHandler
         $submissionId = $submission->getId();
 
         if ($this->isSubmissionPublished($submission)) {
-            return new JSONMessage(false);
+            $latestPublication = $submission->getLatestPublication();
+            if ($latestPublication->getData('status') === PKPSubmission::STATUS_PUBLISHED) {
+                return new JSONMessage(false);
+            }
         }
 
         /** @var DisplayReviewsPreferenceDAO */
@@ -230,7 +233,10 @@ class DocMapReviewsGridHandler extends GridHandler
         $submissionId = $submission->getId();
 
         if ($this->isSubmissionPublished($submission)) {
-            return new JSONMessage(false);
+            $latestPublication = $submission->getLatestPublication();
+            if ($latestPublication->getData('status') === PKPSubmission::STATUS_PUBLISHED) {
+                return new JSONMessage(false);
+            }
         }
 
         /** @var DisplayReviewsPreferenceDAO */
