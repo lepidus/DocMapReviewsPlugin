@@ -275,6 +275,7 @@ class DocMapReviewsPlugin extends GenericPlugin
 
     public function fetchDocMapReviewsByGroup($doi)
     {
+        $doi = strtolower($doi);
         $url = DOCMAPS_API_URL . $doi . DOCMAPS_JSON_VERSION;
 
         $ch = curl_init();
